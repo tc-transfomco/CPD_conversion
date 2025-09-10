@@ -4,10 +4,10 @@ This script processes a daily file based on its creation date.
 
 ## Usage
 
+Normally you would run this daily with no arguments. 
+    python main.py
+However there exists functionality if needed. 
     python main.py [days_ago] [--file /absolute/path/to/file.txt]
-
-Normally you would run this daily with no arguments. However there exists functionality if needed. 
-
 - `days_ago` (optional): Number of days ago the target file was created.
   - `0` = today (default)
   - `1` = yesterday
@@ -23,4 +23,5 @@ The script will throw an error if multiple files exist for a specified day. In t
     python cpd_conversion.py                 # Uses today’s file
     python cpd_conversion.py 1              # Uses yesterday’s file
     python cpd_conversion.py --file "/path/to/file.txt"  # Explicit file path
+
 
