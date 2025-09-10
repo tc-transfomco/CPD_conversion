@@ -24,9 +24,10 @@ The script will throw an error if multiple files exist for a specified day. In t
 
 ## Examples
 
-    python cpd_conversion.py                 # Uses today’s file
-    python cpd_conversion.py 1              # Uses yesterday’s file
+    python cpd_conversion.py                             # Uses today’s file
+    python cpd_conversion.py 1                           # Uses yesterday’s file
     python cpd_conversion.py --file "/path/to/file.txt"  # Explicit file path
+
 
 
 
