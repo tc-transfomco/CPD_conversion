@@ -272,7 +272,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     trxn_day=${row_date:2:2}
     trxn_year=${row_date:4:2}
 
-    # Convert 2-digit year to 4-digit (assumes 2000) ... bugs imminent in 75 years. dear god let this code be dead by then
+    # Convert 2-digit year to 4-digit (assumes 2000) ... bugs imminent in 75 years. 
     trxn_year="20$trxn_year"
 
     gl_trxn_date="${trxn_year}${trxn_month}${trxn_day}"
