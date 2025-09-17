@@ -6,6 +6,7 @@ from network_drive_handler import NetworkDriveHandler
 
 SANDBOX_DESTINATION = "//SHSNGSTFSX/shs_boomi_vol/Test/GL_Files/300-byte"
 PROD_PATH = '//SHSNGPRFSX/shs_boomi_vol/GL_Files/300-byte'
+# PROD_PATH = '\\SHSNGPRFSX\shs_boomi_vol\GL_Files\300-byte'
 NAMING_CONVENTION_PREFIX = "PG.GFEK100.TEXTIPTF_CPD_"
 
 # DELIMITER = ','

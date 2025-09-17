@@ -36,4 +36,3 @@ class NetworkDriveHandler():
 
             wanted_files.append(path.join(self.w_drive, matching_file))
         return wanted_files
-
