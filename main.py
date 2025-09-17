@@ -143,7 +143,7 @@ def parse_file_into_dictionaries(input_file):
 
 def map_in_dicts_to_300_byte_format(dicts, file_name: str):
     mapped = ""
-    file_date = file_name.replace(NetworkDriveHandler.INP_FILE_SUFFIX, "")[-8:]
+    file_date = file_name.lower().replace(NetworkDriveHandler.INP_FILE_SUFFIX, "")[-8:]
     for dict in dicts:
         mapped += convert_dict_to_300_byte(dict, file_date)
     return mapped
