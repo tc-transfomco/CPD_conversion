@@ -43,27 +43,23 @@ LEN_FILLER=16
 # Source the config file
 source config.sh
 
-right_justify() {
-    local val="$1"
-    local len="$2"
-    local pad="${3:- }"
-
-    # Truncate the string to the specified length if it exceeds the length
-    if [ ${#val} -gt $len ]; then
-        val="${val:0:$len}"
-    fi
-    printf "%-${len}s" "$val" | tr ' ' "$pad"
-}
 
 justify() {
+    # $1=val $2=width $3=pad $4=output_var
     local val="$1"
     local len="$2"
     local pad="${3:- }"
-    # Truncate the string to the specified length if it exceeds the length
-    if [ ${#val} -gt $len ]; then
-        val="${val:0:$len}"
+    local outvar="$4"
+    # Truncate to at most $len
+    if (( ${#val} > len )); then
+        val="${val:0:len}"
     fi
-    printf "%${len}s" "$val" | tr ' ' "$pad"
+    # Pad (right-justified/left-padded)
+    printf -v __just_out "%${len}s" "$val"
+    # If pad char is not space, replace
+    [[ "$pad" != " " ]] && __just_out="${__just_out// /$pad}"
+    # Return by reference
+    printf -v "$outvar" "%s" "$__just_out"
 }
 
 # Get today's date components
@@ -115,35 +111,50 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         cost_center_fixed="$cost_center"
     fi
 
-    fixed_width_string+="$(justify "$cost_center_fixed" $LEN_OPERATING_UNIT '0')"
-    offset_string+="$(justify '54590' $LEN_OPERATING_UNIT '0')"
+    justify "$cost_center_fixed" $LEN_OPERATING_UNIT '0' result
+    fixed_width_string+=$result
+    justify '54590' $LEN_OPERATING_UNIT '0' result
+    offset_string+=$result
 
     # division
-    fixed_width_string+="$(justify '400' $LEN_DIVISION ' ')"
-    offset_string+="$(justify '530' $LEN_DIVISION ' ')"
+    justify '400' $LEN_DIVISION ' ' result
+    fixed_width_string+=$result
+    justify '530' $LEN_DIVISION ' ' result
+    offset_string+=$result
 
     # Account
-    fixed_width_string+="$(justify "$gl_account" $LEN_ACCOUNT ' ')"
-    offset_string+="$(justify '21167' $LEN_ACCOUNT ' ')"
+    justify "$gl_account" $LEN_ACCOUNT ' ' result
+    fixed_width_string+=$result
+    justify '21167' $LEN_ACCOUNT ' ' result
+    offset_string+=$result
 
     # Source
-    fixed_width_string+="$(justify 'CPD' $LEN_SOURCE ' ')"
-    offset_string+="$(justify 'CPD' $LEN_SOURCE ' ')"
+    justify 'CPD' $LEN_SOURCE ' ' result
+    fixed_width_string+=$result
+    justify 'CPD' $LEN_SOURCE ' ' result
+    offset_string+=$result
 
     # Category
-    fixed_width_string+="$(justify '' $LEN_CATEGORY ' ')"
-    offset_string+="$(justify '' $LEN_CATEGORY ' ')"
+    justify '' $LEN_CATEGORY ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_CATEGORY ' ' result
+    offset_string+=$result
 
     # YEAR
-    fixed_width_string+="$(justify '' $LEN_YEAR ' ')"
-    offset_string+="$(justify '' $LEN_YEAR ' ')"
+    justify '' $LEN_YEAR ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_YEAR ' ' result
+    offset_string+=$result
 
     # WEEK
-    fixed_width_string+="$(justify '' $LEN_WEEK ' ')"
-    offset_string+="$(justify '' $LEN_WEEK ' ')"
+    justify '' $LEN_WEEK ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_WEEK ' ' result
+    offset_string+=$result
 
     # Cost
-    fixed_width_string+="$(justify "$amount" $LEN_COST ' ')"
+    justify "$amount" $LEN_COST ' ' result
+    fixed_width_string+=$result
 
     # Offset: invert sign
     if [[ "$amount" == -* ]]; then
@@ -154,59 +165,86 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         offset_amount="-$amount"
     fi
 
-    offset_string+="$(justify "$offset_amount" $LEN_COST ' ')" 
+    justify "$offset_amount" $LEN_COST ' ' result
+    offset_string+=$result
 
     # CURRENCY_CODE
-    fixed_width_string+="$(justify '' $LEN_CURRENCY_CODE ' ')"
-    offset_string+="$(justify '' $LEN_CURRENCY_CODE ' ')"
+    justify '' $LEN_CURRENCY_CODE ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_CURRENCY_CODE ' ' result
+    offset_string+=$result
 
     # SELLING_VALUE
-    fixed_width_string+="$(justify '' $LEN_SELLING_VALUE ' ')"
-    offset_string+="$(justify '' $LEN_SELLING_VALUE ' ')"
+    justify '' $LEN_SELLING_VALUE ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_SELLING_VALUE ' ' result
+    offset_string+=$result
 
     # STATISTICAL_AMOUNT
-    fixed_width_string+="$(justify '' $LEN_STATISTICAL_AMOUNT ' ')"
-    offset_string+="$(justify '' $LEN_STATISTICAL_AMOUNT ' ')"
+    justify '' $LEN_STATISTICAL_AMOUNT ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_STATISTICAL_AMOUNT ' ' result
+    offset_string+=$result
 
     # STATISTICAL_CODE
-    fixed_width_string+="$(justify '' $LEN_STATISTICAL_CODE ' ')"
-    offset_string+="$(justify '' $LEN_STATISTICAL_CODE ' ')"
+    justify '' $LEN_STATISTICAL_CODE ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_STATISTICAL_CODE ' ' result
+    offset_string+=$result
 
     # REVERSAL_FLAG
-    fixed_width_string+="$(justify 'N' $LEN_REVERSAL_FLAG ' ')"
-    offset_string+="$(justify 'N' $LEN_REVERSAL_FLAG ' ')"
+    justify 'N' $LEN_REVERSAL_FLAG ' ' result
+    fixed_width_string+=$result
+    justify 'N' $LEN_REVERSAL_FLAG ' ' result
+    offset_string+=$result
 
     # REVERSAL_YEAR
-    fixed_width_string+="$(justify '' $LEN_REVERSAL_YEAR ' ')"
-    offset_string+="$(justify '' $LEN_REVERSAL_YEAR ' ')"
+    justify '' $LEN_REVERSAL_YEAR ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_REVERSAL_YEAR ' ' result
+    offset_string+=$result
 
     # REVERSAL_WEEK
-    fixed_width_string+="$(justify '' $LEN_REVERSAL_WEEK ' ')"
-    offset_string+="$(justify '' $LEN_REVERSAL_WEEK ' ')"
+    justify '' $LEN_REVERSAL_WEEK ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_REVERSAL_WEEK ' ' result
+    offset_string+=$result
 
     # BACKTRAFFIC_FLAG
-    fixed_width_string+="$(justify '' $LEN_BACKTRAFFIC_FLAG ' ')"
-    offset_string+="$(justify '' $LEN_BACKTRAFFIC_FLAG ' ')"
+    justify '' $LEN_BACKTRAFFIC_FLAG ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_BACKTRAFFIC_FLAG ' ' result
+    offset_string+=$result
 
     # SYSTEM_SWITCH
-    fixed_width_string+="$(justify '' $LEN_SYSTEM_SWITCH ' ')"
-    offset_string+="$(justify '' $LEN_SYSTEM_SWITCH ' ')"
+    justify '' $LEN_SYSTEM_SWITCH ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_SYSTEM_SWITCH ' ' result
+    offset_string+=$result
 
     # memo
-    fixed_width_string+="$(justify "$memo_num" $LEN_DESCRIPTION ' ')"
-    offset_string+="$(justify "$memo_num" $LEN_DESCRIPTION ' ')"
+    justify "$memo_num" $LEN_DESCRIPTION ' ' result
+    fixed_width_string+=$result
+    justify "$memo_num" $LEN_DESCRIPTION ' ' result
+    offset_string+=$result
 
     # ENTRY_TYPE
-    fixed_width_string+="$(justify '' $LEN_ENTRY_TYPE ' ')"
-    offset_string+="$(justify '' $LEN_ENTRY_TYPE ' ')"
+    justify '' $LEN_ENTRY_TYPE ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_ENTRY_TYPE ' ' result
+    offset_string+=$result
 
     # RECORD_TYPE
-    fixed_width_string+="$(justify '' $LEN_RECORD_TYPE ' ')"
-    offset_string+="$(justify '' $LEN_RECORD_TYPE ' ')"
+    justify '' $LEN_RECORD_TYPE ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_RECORD_TYPE ' ' result
+    offset_string+=$result
 
     # REF_NBR_1
-    fixed_width_string+="$(justify '' $LEN_REF_NBR_1 ' ')"
-    offset_string+="$(justify '' $LEN_REF_NBR_1 ' ')"
+    justify '' $LEN_REF_NBR_1 ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_REF_NBR_1 ' ' result
+    offset_string+=$result
 
     # doc number. 
     clean_doc_num="${doc_num//-/}"
@@ -216,56 +254,82 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         ref_value=" "
     fi
     
-    fixed_width_string+="$(justify "$ref_value" $LEN_DOC_NBR ' ')"
-    offset_string+="$(justify "$ref_value" $LEN_DOC_NBR ' ')"
+    justify "$ref_value" $LEN_DOC_NBR ' ' result
+    fixed_width_string+=$result
+    justify "$ref_value" $LEN_DOC_NBR ' ' result
+    offset_string+=$result
 
     # REF_NBR_2
-    fixed_width_string+="$(justify '' $LEN_REF_NBR_2 ' ')"
-    offset_string+="$(justify '' $LEN_REF_NBR_2 ' ')"
+    justify '' $LEN_REF_NBR_2 ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_REF_NBR_2 ' ' result
+    offset_string+=$result
 
     # first name
-    fixed_width_string+="$(justify "$first_name" $LEN_MISC_1 ' ')"
-    offset_string+="$(justify "$first_name" $LEN_MISC_1 ' ')"
+    justify "$first_name" $LEN_MISC_1 ' ' result
+    fixed_width_string+=$result
+    justify "$first_name" $LEN_MISC_1 ' ' result
+    offset_string+=$result
 
     # last name
-    fixed_width_string+="$(justify "$last_name" $LEN_MISC_2 ' ')"
-    offset_string+="$(justify "$last_name" $LEN_MISC_2 ' ')"
+    justify "$last_name" $LEN_MISC_2 ' ' result
+    fixed_width_string+=$result
+    justify "$last_name" $LEN_MISC_2 ' ' result
+    offset_string+=$result
 
     # claim type
-    fixed_width_string+="$(justify "$claim_type" $LEN_MISC_3 ' ')"
-    offset_string+="$(justify "$claim_type" $LEN_MISC_3 ' ')"
+    justify "$claim_type" $LEN_MISC_3 ' ' result
+    fixed_width_string+=$result
+    justify "$claim_type" $LEN_MISC_3 ' ' result
+    offset_string+=$result
 
     # TO_FROM
-    fixed_width_string+="$(justify '' $LEN_TO_FROM ' ')"
-    offset_string+="$(justify '' $LEN_TO_FROM ' ')"
+    justify '' $LEN_TO_FROM ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_TO_FROM ' ' result
+    offset_string+=$result
 
     # DOC DATE
-    fixed_width_string+="$(justify "$year$month$day" $LEN_DOC_DATE ' ')"
-    offset_string+="$(justify "$year$month$day" $LEN_DOC_DATE ' ')"
+    justify "$year$month$day" $LEN_DOC_DATE ' ' result
+    fixed_width_string+=$result
+    justify "$year$month$day" $LEN_DOC_DATE ' ' result
+    offset_string+=$result
 
     # EXP_CODE
-    fixed_width_string+="$(justify '' $LEN_EXP_CODE ' ')"
-    offset_string+="$(justify '' $LEN_EXP_CODE ' ')"
+    justify '' $LEN_EXP_CODE ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_EXP_CODE ' ' result
+    offset_string+=$result
 
     # EMP_NBR
-    fixed_width_string+="$(justify '' $LEN_EMP_NBR ' ')"
-    offset_string+="$(justify '' $LEN_EMP_NBR ' ')"
+    justify '' $LEN_EMP_NBR ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_EMP_NBR ' ' result
+    offset_string+=$result
 
     # DET_TRAN_DATE
-    fixed_width_string+="$(justify "$row_date" $LEN_DET_TRAN_DATE ' ')"
-    offset_string+="$(justify "$row_date" $LEN_DET_TRAN_DATE ' ')"
+    justify "$row_date" $LEN_DET_TRAN_DATE ' ' result
+    fixed_width_string+=$result
+    justify "$row_date" $LEN_DET_TRAN_DATE ' ' result
+    offset_string+=$result
 
     # ORIG_ENTRY
-    fixed_width_string+="$(justify '' $LEN_ORIG_ENTRY ' ')"
-    offset_string+="$(justify '' $LEN_ORIG_ENTRY ' ')"
+    justify '' $LEN_ORIG_ENTRY ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_ORIG_ENTRY ' ' result
+    offset_string+=$result
 
     # REP_FLG
-    fixed_width_string+="$(justify '' $LEN_REP_FLG ' ')"
-    offset_string+="$(justify '' $LEN_REP_FLG ' ')"
+    justify '' $LEN_REP_FLG ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_REP_FLG ' ' result
+    offset_string+=$result
 
     # ORU
-    fixed_width_string+="$(justify '' $LEN_ORU ' ')"
-    offset_string+="$(justify '' $LEN_ORU ' ')"
+    justify '' $LEN_ORU ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_ORU ' ' result
+    offset_string+=$result
 
     # GL_TRXN_DATE
     trxn_month=${row_date:0:2}
@@ -277,12 +341,16 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
     gl_trxn_date="${trxn_year}${trxn_month}${trxn_day}"
 
-    fixed_width_string+="$(justify "$gl_trxn_date" $LEN_GL_TRXN_DATE ' ')"
-    offset_string+="$(justify "$gl_trxn_date" $LEN_GL_TRXN_DATE ' ')"
+    justify "$gl_trxn_date" $LEN_GL_TRXN_DATE ' ' result
+    fixed_width_string+=$result
+    justify "$gl_trxn_date" $LEN_GL_TRXN_DATE ' ' result
+    offset_string+=$result
 
     # FILLER
-    fixed_width_string+="$(justify '' $LEN_FILLER ' ')"
-    offset_string+="$(justify '' $LEN_FILLER ' ')"
+    justify '' $LEN_FILLER ' ' result
+    fixed_width_string+=$result
+    justify '' $LEN_FILLER ' ' result
+    offset_string+=$result
 
     {
         echo "$fixed_width_string"
@@ -291,6 +359,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 done < "$local_copy"
 
 network_destination="${prod_path%/}/${output_filename}"
+echo $network_destination
 # echo "quitting!"
 # exit 1
 if mv "$local_output_file" "$network_destination"; then
