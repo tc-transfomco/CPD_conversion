@@ -359,8 +359,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 done < "$local_copy"
 
 network_destination="${prod_path%/}/${output_filename}"
-echo "quitting!"
-exit 1
+echo $network_destination
+# echo "quitting!"
+# exit 1
 if mv "$local_output_file" "$network_destination"; then
   echo "File successfully moved."
 else

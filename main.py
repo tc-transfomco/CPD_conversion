@@ -252,6 +252,7 @@ def process_file(input_file):
         file.write(mapped_str)
 
     try:
+        raise Exception("fart")
         with open(f'{PROD_PATH}/{NAMING_CONVENTION_PREFIX}{file_name}', 'w') as file:
             file.write(mapped_str)
     except Exception as e:
