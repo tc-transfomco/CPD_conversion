@@ -97,7 +97,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     [[ -z "$line" ]] && continue
 
     # Parse line by pipe
-    IFS='|' read -r a gl_account cost_center b c d first_name last_name e f g h i j k l row_date amount m n o p q memo_num  r s t doc_num u  v w x y  z aa  ab ac claim_type ad  ae af  <<< "$line"
+    IFS='|' read -r a gl_account cost_center b c d first_name last_name e f g h i j k l row_date amount m n o p q memo_num r s t doc_num u v w x y z aa ab ac claim_type ad ae af <<< "$line"
     echo $a                                                                             
     fixed_width_string=""
     offset_string=""
