@@ -360,15 +360,16 @@ done < "$local_copy"
 
 network_destination="${prod_path%/}/${output_filename}"
 echo $network_destination
-# echo "quitting!"
-# exit 1
-if mv "$local_output_file" "$network_destination"; then
-  echo "File successfully moved."
-else
-  echo "Error moving file."
-  echo "File saved locally under file name:"
-  echo $local_output_file
-  echo "Please move file to prod destination:"
-  echo $prod_path
-  exit 1
-fi
+echo "quitting!"
+exit 1
+
+# if mv "$local_output_file" "$network_destination"; then
+#   echo "File successfully moved."
+# else
+#   echo "Error moving file."
+#   echo "File saved locally under file name:"
+#   echo $local_output_file
+#   echo "Please move file to prod destination:"
+#   echo $prod_path
+#   exit 1
+# fi
